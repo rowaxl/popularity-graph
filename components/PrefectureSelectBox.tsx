@@ -1,31 +1,37 @@
 import { Prefecture } from "../interfaces";
-import CheckBox from "./CheckBox";
 import styles from '../styles/Checkboxes.module.css'
 
 interface PrefectureCheckBoxesProps {
   prefectures?: {
     [prefCode: string]: Prefecture
   }
-  updateChecked: (target: string) => void
+  isLoading: boolean,
+  updateChecked: (target: number) => void
 }
 
-const PrefectureCheckBoxes = ({ prefectures, updateChecked }: PrefectureCheckBoxesProps) => {
-  const handleChangeChecked = (target: string) => {
+const PrefectureCheckBoxes = ({ prefectures, isLoading,  updateChecked }: PrefectureCheckBoxesProps) => {
+  const handleChangeChecked = (target: number) => {
     updateChecked(target);
   }
 
-  if (!prefectures) return <>Loading...</>;
+  if (isLoading || !prefectures) return <>Loading...</>;
 
   return (
     <div className={styles.container}>
       {Object.keys(prefectures).map(code => (
-        <CheckBox
-          key={prefectures[code].prefCode}
-          label={prefectures[code].prefName}
-          value={prefectures[code].prefCode.toString()}
-          isChecked={!!prefectures[code].checked}
-          onChange={handleChangeChecked}
-        />
+        <div className={styles.checkbox} key={prefectures[code].prefCode}>
+          <input
+            id={`checkbox_${code}`}
+            type='checkbox'
+            value={code}
+            checked={!!prefectures[code].checked}
+            onChange={() => handleChangeChecked(parseInt(code))}
+          />
+    
+          <label htmlFor={`checkbox_${code}`}>
+            {prefectures[code].prefName}
+          </label>
+        </div>
       ))}
     </div>
   )

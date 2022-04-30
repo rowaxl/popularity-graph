@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import PrefectureCheckBoxes from '../components/PrefectureSelectBox'
 import { useGetPrefectures } from '../hooks/useGetPrefectures'
 import { Prefecture } from '../interfaces'
@@ -10,10 +10,14 @@ import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   // 都道府県取得
-  const { prefectures, hasError: hasGetPrefectureError } = useGetPrefectures();
+  const {
+    prefectures,
+    hasError: hasGetPrefectureError,
+    isLoading: isLoadingPrefectures,
+  } = useGetPrefectures();
   const [prefectureMap, setPrefectureMap] = useState<Record<string, Prefecture>>();
 
-  const handleUpdateChecked = (target: string) => {
+  const handleUpdateChecked = (target: number) => {
     const targetRow = prefectureMap ? prefectureMap[target] : undefined;
     if (!targetRow) return
 
@@ -41,7 +45,12 @@ const Home: NextPage = () => {
       setPrefectureMap(map)
     }
   }, [prefectures]);
-  // 東京都チェック
+
+  const checkedPrefectures = useMemo(() => {
+    if (!prefectureMap) return;
+
+    return Object.keys(prefectureMap).filter(key => prefectureMap[key].checked).map(key => prefectureMap[key]);
+  }, [prefectureMap])
   // チェックされているprefCodeのpopulationを取得
   // 取得したpopulationは、reduxに格納
   // チェック状態の変化時、reduxにデータがないと取得
@@ -55,16 +64,21 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <div className={styles.grid}>
+        <div className={styles.grid + ' ' + styles.gridWrap}>
           <h1 className={styles.title}>
             都道府県別人口推移
           </h1>
+
+          <h2>
+            {checkedPrefectures?.map(p => p.prefName).join(', ')}
+          </h2>
         </div>
 
         <div className={styles.grid}>
           <PrefectureCheckBoxes
             prefectures={prefectureMap}
             updateChecked={handleUpdateChecked}
+            isLoading={isLoadingPrefectures}
           />
         </div>
 

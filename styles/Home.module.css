@@ -20,6 +20,10 @@
   max-width: 800px;
 }
 
+.gridWrap {
+  flex-direction: column;
+}
+
 .title {
   margin: 0;
 }
@@ -31,6 +35,5 @@
 
   .grid {
     width: 100%;
-    flex-direction: column;
   }
 }
