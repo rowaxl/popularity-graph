@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 
 import { useState, useEffect, useMemo } from 'react'
+import PopulationChart from '../components/PopulationChart'
 import PrefectureCheckBoxes from '../components/PrefectureSelectBox'
 import useGetPopulation from '../hooks/useGetPopulation'
 import { useGetPrefectures } from '../hooks/useGetPrefectures'
@@ -59,17 +60,6 @@ const Home: NextPage = () => {
     selectedPopulationData,
     isLoading: isLoadingPopulationData
   } = useGetPopulation(prefectureMap);
-  // チェックされているprefCodeのpopulationを取得
-  // 取得したpopulationは、reduxに格納
-  // チェック状態の変化時、reduxにデータがないと取得
-  // ある場合はredux内のデータを使う
-
-  useEffect(() => {
-    console.log({
-      checked: checkedPrefectures?.map(checked => checked.prefCode),
-      selectedPopulationData
-    })
-  }, [prefectureMap])
 
   return (
     <div className={styles.container}>
@@ -98,8 +88,10 @@ const Home: NextPage = () => {
         </div>
 
         <div className={styles.grid}>
-          {/* graphs */}
-          Graph
+          {
+            selectedPopulationData &&
+            <PopulationChart populations={selectedPopulationData} isLoading={isLoadingPopulationData} />
+          }
         </div>
       </main>
 

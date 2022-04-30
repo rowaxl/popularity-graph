@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { PopulationResponse, PopulationSingleData, Prefecture } from '../interfaces';
-import { API_URL_POPULATION } from '../libs/config';
+import { PopulationMap, PopulationResponse, PopulationSingleData, Prefecture } from '../interfaces';
+import { API_URL_POPULATION, STROKE_COLORS } from '../libs/config';
 import { fetcher } from '../libs/fetcher';
 
 const cachedData: Record<string, PopulationSingleData[]> = {};
@@ -16,22 +16,33 @@ const getPopulationData = async (code: number) => {
 }
 
 const useGetPopulation = (prefectureMap?: Record<string, Prefecture>) => {
-  const [selectedPopulationData, setSelectedPopulationData] = useState<Record<string, PopulationSingleData[]>[]>();
+  const [selectedPopulationData, setSelectedPopulationData] = useState<PopulationMap[]>();
   const [errors, setErrors] = useState<Error>();
 
   const fetchPopulationData = async (prefCodes?: number[]) => {
-    if (!prefCodes) return [];
+    if (!prefCodes || !prefectureMap) return [];
 
     const result = await Promise.all(prefCodes.map(async (code) => {
       const dataKey = code.toString() as keyof typeof cachedData;
+
       if (cachedData[dataKey])
-        return { [code]: cachedData[dataKey] };
+        return {
+          prefName: prefectureMap[code].prefName || '',
+          prefCode: code,
+          color: STROKE_COLORS[code],
+          data: cachedData[dataKey]
+        };
 
       const populationData = await getPopulationData(code);
 
       cachedData[dataKey] = populationData;
 
-      return { [code]: populationData};
+      return ({
+        prefName: prefectureMap[code].prefName || '',
+        prefCode: code,
+        color: STROKE_COLORS[code],
+        data: populationData
+      });
     }));
 
     if (!result) return;

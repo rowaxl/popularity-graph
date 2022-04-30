@@ -21,3 +21,10 @@ export interface PopulationResponse {
     }[]
   }
 }
+
+export interface PopulationMap {
+  prefName: string
+  prefCode: number
+  color: string
+  data: PopulationSingleData[]
+}
