@@ -3,6 +3,7 @@ import Head from 'next/head'
 
 import { useState, useEffect, useMemo } from 'react'
 import PrefectureCheckBoxes from '../components/PrefectureSelectBox'
+import useGetPopulation from '../hooks/useGetPopulation'
 import { useGetPrefectures } from '../hooks/useGetPrefectures'
 import { Prefecture } from '../interfaces'
 import { PREFECTURE_CODES } from '../libs/config'
@@ -15,7 +16,9 @@ const Home: NextPage = () => {
     hasError: hasGetPrefectureError,
     isLoading: isLoadingPrefectures,
   } = useGetPrefectures();
+
   const [prefectureMap, setPrefectureMap] = useState<Record<string, Prefecture>>();
+  const [checked, setChecked] = useState<number[]>([]);
 
   const handleUpdateChecked = (target: number) => {
     const targetRow = prefectureMap ? prefectureMap[target] : undefined;
@@ -50,11 +53,23 @@ const Home: NextPage = () => {
     if (!prefectureMap) return;
 
     return Object.keys(prefectureMap).filter(key => prefectureMap[key].checked).map(key => prefectureMap[key]);
-  }, [prefectureMap])
+  }, [prefectureMap]);
+
+  const {
+    selectedPopulationData,
+    isLoading: isLoadingPopulationData
+  } = useGetPopulation(prefectureMap);
   // チェックされているprefCodeのpopulationを取得
   // 取得したpopulationは、reduxに格納
   // チェック状態の変化時、reduxにデータがないと取得
   // ある場合はredux内のデータを使う
+
+  useEffect(() => {
+    console.log({
+      checked: checkedPrefectures?.map(checked => checked.prefCode),
+      selectedPopulationData
+    })
+  }, [prefectureMap])
 
   return (
     <div className={styles.container}>

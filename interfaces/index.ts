@@ -15,6 +15,9 @@ export interface PrefectureResponse {
 
 export interface PopulationResponse {
   result: {
-    data: PopulationSingleData[]
+    data: {
+      label: string
+      data: PopulationSingleData[]
+    }[]
   }
 }
