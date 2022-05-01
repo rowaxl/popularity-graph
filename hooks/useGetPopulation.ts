@@ -18,20 +18,23 @@ const getPopulationData = async (code: number) => {
 const useGetPopulation = (prefectureMap?: Record<string, Prefecture>) => {
   const [selectedPopulationData, setSelectedPopulationData] = useState<PopulationMap[]>();
   const [errors, setErrors] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchPopulationData = async (prefCodes?: number[]) => {
     if (!prefCodes || !prefectureMap) return [];
 
+    setIsLoading(true);
     const result = await Promise.all(prefCodes.map(async (code) => {
       const dataKey = code.toString() as keyof typeof cachedData;
 
-      if (cachedData[dataKey])
+      if (cachedData[dataKey]) {
         return {
           prefName: prefectureMap[code].prefName || '',
           prefCode: code,
           color: STROKE_COLORS[code],
           data: cachedData[dataKey]
         };
+      }
 
       const populationData = await getPopulationData(code);
 
@@ -45,6 +48,7 @@ const useGetPopulation = (prefectureMap?: Record<string, Prefecture>) => {
       });
     }));
 
+    setIsLoading(false);
     if (!result) return;
 
     setSelectedPopulationData(result);
@@ -60,7 +64,7 @@ const useGetPopulation = (prefectureMap?: Record<string, Prefecture>) => {
 
   return {
     selectedPopulationData,
-    isLoading: !setSelectedPopulationData && !errors,
+    isLoading,
     errors,
   }
 }

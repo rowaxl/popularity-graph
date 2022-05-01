@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 
 import { useState, useEffect, useMemo } from 'react'
+import Overlay from '../components/Ovelay'
 import PopulationChart from '../components/PopulationChart'
 import PrefectureCheckBoxes from '../components/PrefectureSelectBox'
 import useGetPopulation from '../hooks/useGetPopulation'
@@ -90,13 +91,19 @@ const Home: NextPage = () => {
         <div className={styles.grid}>
           {
             selectedPopulationData &&
-            <PopulationChart populations={selectedPopulationData} isLoading={isLoadingPopulationData} />
+            <PopulationChart
+              populations={selectedPopulationData}
+              isLoading={isLoadingPopulationData}
+            />
           }
         </div>
       </main>
 
       <footer className={styles.footer}>
+        By rowaxl0(rowaxl0@gmail.com)
       </footer>
+
+      <Overlay isShown={isLoadingPrefectures|| isLoadingPopulationData} />
     </div>
   )
 }
