@@ -5,16 +5,15 @@ interface PrefectureCheckBoxesProps {
   prefectures?: {
     [prefCode: string]: Prefecture
   }
-  isLoading: boolean,
   updateChecked: (target: number) => void
 }
 
-const PrefectureCheckBoxes = ({ prefectures, isLoading,  updateChecked }: PrefectureCheckBoxesProps) => {
+const PrefectureCheckBoxes = ({ prefectures, updateChecked }: PrefectureCheckBoxesProps) => {
   const handleChangeChecked = (target: number) => {
     updateChecked(target);
   }
 
-  if (isLoading || !prefectures) return <>Loading...</>;
+  if (!prefectures) return <>Loading...</>;
 
   // TODO: ADD RESET / SELECT ALL
 

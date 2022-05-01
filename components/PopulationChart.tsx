@@ -13,14 +13,12 @@ import styles from '../styles/Charts.module.css';
 
 interface PopulationChartProps {
   populations: PopulationMap[]
-  isLoading: boolean
 }
 
-const PopulationChart = ({ populations, isLoading }: PopulationChartProps) => {
-  if (isLoading) return <>Loading...</>;
+const PopulationChart = ({ populations }: PopulationChartProps) => {
+  if (!populations) return <>Loading...</>;
 
   return (
-
     <div className={styles.wrapper}>
       <ResponsiveContainer
         width="99%"

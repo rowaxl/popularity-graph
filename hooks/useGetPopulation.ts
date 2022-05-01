@@ -17,13 +17,14 @@ const getPopulationData = async (code: number) => {
 
 const useGetPopulation = (prefectureMap?: Record<string, Prefecture>) => {
   const [selectedPopulationData, setSelectedPopulationData] = useState<PopulationMap[]>();
-  const [errors, setErrors] = useState<Error>();
+  const [errors, setErrors] = useState<Error[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchPopulationData = async (prefCodes?: number[]) => {
     if (!prefCodes || !prefectureMap) return [];
 
     setIsLoading(true);
+    setErrors([]);
     const result = await Promise.all(prefCodes.map(async (code) => {
       const dataKey = code.toString() as keyof typeof cachedData;
 
@@ -37,6 +38,8 @@ const useGetPopulation = (prefectureMap?: Record<string, Prefecture>) => {
       }
 
       const populationData = await getPopulationData(code);
+
+      if (!populationData) setErrors([...errors, new Error('Failed to fetch population data')])
 
       cachedData[dataKey] = populationData;
 
