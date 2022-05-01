@@ -15,8 +15,6 @@ const PrefectureCheckBoxes = ({ prefectures, updateChecked }: PrefectureCheckBox
 
   if (!prefectures) return <>Loading...</>;
 
-  // TODO: ADD RESET / SELECT ALL
-
   return (
     <div className={styles.container}>
       {Object.keys(prefectures).map(code => (
